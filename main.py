@@ -7,8 +7,7 @@ from database import SessionLocal, engine
 from models import Product
 
 # Drop and recreate tables (dev only)
-database_models.Base.metadata.drop_all(bind=engine)
-database_models.Base.metadata.create_all(bind=engine)
+database_models.Base.metadata.create_all(bind=engine)   
 
 app = FastAPI()
 
@@ -59,16 +58,18 @@ def get_db():
 
 
 def init_db():
-    db = SessionLocal()
-    count = db.query(database_models.Product).count()
-    if count == 0:
-        for product in products:
-            db.add(database_models.Product(**product.model_dump()))
-        db.commit()
-    db.close()
+    try:
+        db = SessionLocal()
+        count = db.query(database_models.Product).count()
+        if count == 0:
+            for product in products:
+                db.add(database_models.Product(**product.model_dump()))
+            db.commit()
+        db.close()
+    except Exception as e:
+        print(f"init_db skipped: {e}")
 
-init_db()
-
+init_db()   
 
 @app.get("/products", response_model=List[Product])
 def get_products(db: Session = Depends(get_db)):

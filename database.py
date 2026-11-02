@@ -1,8 +1,8 @@
-
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-dburl = "postgresql+psycopg2://postgres:1234@localhost:5432/fastapi_demo"   
+dburl = os.environ.get("DATABASE_URL", "postgresql+psycopg2://postgres:1234@localhost:5432/fastapi_demo")
 engine = create_engine(dburl)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
